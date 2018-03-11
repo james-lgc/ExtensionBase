@@ -146,28 +146,6 @@ namespace DSA.Extensions.Base.Editor
 			return newPosition;
 		}
 
-		public static Rect DrawStoryIndex(Rect position, SerializedProperty property)
-		{
-			//draw story index label
-			Rect newPosition = DrawLabel(position, "Story Index");
-			//draw story index
-			//draw myth id
-			SerializedProperty mythID = property.FindPropertyRelative("mythID");
-			newPosition = DrawIntField(newPosition, mythID, "Myth ID");
-			//draw story id
-			SerializedProperty storyID = property.FindPropertyRelative("storyID");
-			newPosition = DrawIntField(newPosition, storyID, "Story ID");
-			//draw thread id
-			SerializedProperty threadID = property.FindPropertyRelative("threadID");
-			newPosition = DrawIntField(newPosition, threadID, "Thread ID");
-			//draw stage id
-			SerializedProperty stageID = property.FindPropertyRelative("stageID");
-			newPosition = DrawIntField(newPosition, stageID, "Stage ID");
-			//remove indent
-			newPosition = GetIndentedPosition(newPosition, false);
-			return newPosition;
-		}
-
 		public static Rect DrawReorderableList(Rect position, UnityEditorInternal.ReorderableList sentList, string label)
 		{
 			//draw label
@@ -185,6 +163,23 @@ namespace DSA.Extensions.Base.Editor
 			return newPosition;
 		}
 
+		public static Rect DrawArray(Rect position, SerializedProperty sentProperty, string label = null)
+		{
+			float height = lineHeight + (sentProperty.arraySize * lineHeight) + (sentProperty.arraySize - 1) * verticalPadding;
+			Rect totalPosition = GetPosition(position, height);
+			height += 50F;
+			Rect newPosition = GetPosition(position, lineHeight);
+			sentProperty.arraySize = EditorGUI.IntField(newPosition, label, sentProperty.arraySize);
+			newPosition = GetIndentedPosition(newPosition);
+			for (int i = 0; i < sentProperty.arraySize; i++)
+			{
+				SerializedProperty element = sentProperty.GetArrayElementAtIndex(i);
+				newPosition = GetPosition(newPosition, GetHeight(element));
+				EditorGUI.PropertyField(newPosition, element, true);
+			}
+			return totalPosition;
+		}
+
 		//Returns a reorderable list of properties which are fully displayed 
 		public static UnityEditorInternal.ReorderableList GetDefaultFullDisplayList(SerializedProperty sentProperty, string sentLabel, bool allowMultipleExpansions = false)
 		{
@@ -192,8 +187,8 @@ namespace DSA.Extensions.Base.Editor
 			UnityEditorInternal.ReorderableList tempList = new UnityEditorInternal.ReorderableList(sentProperty.serializedObject, sentProperty, true, true, true, true);
 			tempList.drawHeaderCallback = (Rect rect) =>
 			{
-			//Draw header
-			EditorGUI.LabelField(rect, sentLabel);
+				//Draw header
+				EditorGUI.LabelField(rect, sentLabel);
 			};
 			//Set how list elements are drawn
 			tempList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -221,21 +216,21 @@ namespace DSA.Extensions.Base.Editor
 			UnityEditorInternal.ReorderableList reorderableList = new UnityEditorInternal.ReorderableList(sentProperty.serializedObject, sentProperty, true, true, true, true);
 			reorderableList.drawHeaderCallback = (Rect rect) =>
 			{
-			//Draw header
-			EditorGUI.LabelField(rect, sentLabel);
+				//Draw header
+				EditorGUI.LabelField(rect, sentLabel);
 			};
 			//Set how list elements are drawn
 			reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
-			//Get the property from the element
-			SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-			//Add extra height padding
-			rect.y += 2;
-			//display edit button
-			if (GUI.Button(new Rect(rect.x + 10, rect.y, 60, EditorGUIUtility.singleLineHeight), "Edit"))
+				//Get the property from the element
+				SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
+				//Add extra height padding
+				rect.y += 2;
+				//display edit button
+				if (GUI.Button(new Rect(rect.x + 10, rect.y, 60, EditorGUIUtility.singleLineHeight), "Edit"))
 				{
-				//if pressed, call edit action
-				editAction(element);
+					//if pressed, call edit action
+					editAction(element);
 				}
 				float totalButtonWidth = 80F;
 				float useableXPosition = rect.x + totalButtonWidth;
@@ -259,9 +254,9 @@ namespace DSA.Extensions.Base.Editor
 				}
 				try
 				{
-				//Display a label on the element with the element name
-				//relies on element having name property
-				float textWidth = minimumMainTextWidth;
+					//Display a label on the element with the element name
+					//relies on element having name property
+					float textWidth = minimumMainTextWidth;
 					if (minimumMainTextWidth < rect.width - (totalButtonWidth))
 					{
 						textWidth = rect.width - (totalButtonWidth + endLength + 10F);
@@ -274,13 +269,13 @@ namespace DSA.Extensions.Base.Editor
 					EditorGUI.LabelField(textRect, element.FindPropertyRelative("name").stringValue, EditorStyles.label);
 				}
 
-			//if no name property found, log an error message
-			catch (System.Exception e)
+				//if no name property found, log an error message
+				catch (System.Exception e)
 				{
 					Debug.Log("No name property found in list element.\n" + e.ToString());
 				}
-			//change colours for testing
-		};
+				//change colours for testing
+			};
 			//implement onAdd
 			if (addAction != null)
 			{
