@@ -1,0 +1,8 @@
+{
+    "name": "DSA.Extensions.Base.Editor",
+    "references": [
+        "DSA.Extensions.Base"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}
