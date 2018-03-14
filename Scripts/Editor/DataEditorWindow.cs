@@ -164,6 +164,7 @@ namespace DSA.Extensions.Base.Editor
 		public void Set(JsonWriter<T> sentWriter, string sentName)
 		{
 			writer = sentWriter;
+			writer.Set();
 			serializedWriter = new SerializedObject(writer);
 			lineHeight = EditorGUIUtility.singleLineHeight;
 			if (propertyList == null || propertyList.Count == 0)
