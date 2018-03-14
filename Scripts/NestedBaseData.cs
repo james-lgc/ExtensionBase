@@ -9,6 +9,9 @@ namespace DSA.Extensions.Base
 	//The base class for serializable nested data that may be altered at run time
 	public abstract class NestedBaseData<T> : DataItem, IIndexable, INestable<DataItem> where T : DataItem
 	{
+		//array of nested DataItems
+		[SerializeField] protected T[] dataArray;
+
 		//create a new instance containing an array of the nested type
 		public NestedBaseData(T[] sentArray)
 		{
@@ -26,9 +29,16 @@ namespace DSA.Extensions.Base
 		public NestedBaseData() : base() { }
 
 		//used to return the nested data
-		public abstract DataItem[] GetArray();
+		public virtual DataItem[] GetArray()
+		{
+			return dataArray;
+		}
+
 		//used to set the nested data
-		protected abstract void SetArray(T[] sentData);
+		protected virtual void SetArray(T[] sentData)
+		{
+			dataArray = sentData;
+		}
 
 		//returns nested indexed data from provided ids
 		//counter counts how many levels of nesting have been reached
@@ -82,8 +92,7 @@ namespace DSA.Extensions.Base
 
 		protected void SetChildUnqueIDs(IProvider<string, string, string> sentProvider)
 		{
-			DataItem[] tempArray = GetArray();
-			SetArrayUniqueIDs(tempArray, sentProvider);
+			SetArrayUniqueIDs(dataArray, sentProvider);
 		}
 
 		protected void SetArrayUniqueIDs(DataItem[] sentArray, IProvider<string, string, string> sentProvider)

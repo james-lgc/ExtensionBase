@@ -10,6 +10,8 @@ namespace DSA.Extensions.Base.Editor
 	[CustomPropertyDrawer(typeof(PrintableString))]
 	public class PrintableStringDrawer : DataItemDrawer
 	{
+		protected override Action<SerializedProperty> editAction { get; }
+
 		protected override void DrawChildProperties(Rect position, SerializedProperty property)
 		{
 			Rect newPosition = new Rect(position.x, position.y, position.width, 0F);
@@ -18,7 +20,7 @@ namespace DSA.Extensions.Base.Editor
 			newPosition = DrawUniqueID(newPosition);
 			//draw name
 			Debug.Log(name.stringValue);
-			newPosition = DrawTextArea(newPosition, name, "Name");
+			newPosition = EditorTool.DrawTextArea(newPosition, name, "Name");
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -26,9 +28,9 @@ namespace DSA.Extensions.Base.Editor
 			SetProperties(property);
 			float totalHeight = 0F;
 			//UniqueID
-			totalHeight += GetAddedHeight(lineHeight);
+			totalHeight += EditorTool.GetAddedHeight(EditorTool.LineHeight);
 			//text
-			totalHeight += GetAddedHeight(GetHeight(name));
+			totalHeight += EditorTool.GetAddedHeight(EditorTool.GetHeight(name));
 			return totalHeight;
 		}
 	}

@@ -34,10 +34,10 @@ namespace DSA.Extensions.Base.Editor
 			storyIndex = property.FindPropertyRelative("sIndex");
 			instruction = property.FindPropertyRelative("instruction");
 			float totalHeight = EditorTool.GetHeight(storyIndex);
-			totalHeight += EditorTool.lineHeight;
+			totalHeight += EditorTool.LineHeight;
 			if (instruction.enumValueIndex == 4)
 			{
-				totalHeight += EditorTool.lineHeight;
+				totalHeight += EditorTool.LineHeight;
 			}
 			return totalHeight;
 		}

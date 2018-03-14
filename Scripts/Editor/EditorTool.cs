@@ -3,27 +3,100 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using DSA.Extensions.Base;
+using System.Reflection;
+using System.Linq;
 
 namespace DSA.Extensions.Base.Editor
 {
-	public class EditorTool
+	public static class EditorTool
 	{
 		//height of a single line
-		public static float lineHeight = EditorGUIUtility.singleLineHeight;
+		public static float LineHeight { get { return EditorGUIUtility.singleLineHeight; } }
+		//total added height for a line including padding
+		public static float AddedLineHeight { get { return LineHeight + VerticalPadding; } }
 		//horiztonal length to indent by
-		public static float indentDistance { get { return 40F; } }
+		public static float IndentDistance { get { return 40F; } }
 		//extra space added between elements
-		public static float verticalPadding { get { return 5F; } }
+		public static float VerticalPadding { get { return 5F; } }
 		//initial extra space at top of property
-		public static float initialVerticalPaddingHeight { get { return 10F; } }
+		public static float InitialVerticalPadding { get { return 10F; } }
 		//initial extra spac at side of property
-		public static float initialHorizontalPaddingHeight { get { return 5F; } }
+		public static float InitialHorizontalPadding { get { return 5F; } }
+
+		public static object GetReflectedObjectFromPath(System.Type sentType, string path, object sentObject)
+		{
+			System.Type parentType = sentType;
+			System.Reflection.FieldInfo fi = parentType.GetField(path);
+			string arrayParsedPath = path.Replace("Array.data", "");
+			string bracketParsedPath = arrayParsedPath.Replace("[", "").Replace("]", "");
+			string[] perDot = arrayParsedPath.Split('.');
+			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			object currentObject = sentObject;
+			foreach (string fieldName in perDot)
+			{
+				if (parentType.IsArray || typeof(IEnumerable).IsAssignableFrom(parentType))
+				{
+					int index = 0;
+					index = int.Parse(fieldName.Replace("[", "").Replace("]", ""));
+					object[] array = (object[])currentObject;
+					currentObject = array[index];
+					parentType = parentType.GetElementType();
+				}
+				else
+				{
+					FieldInfo tempInfo = parentType.GetField(fieldName, flags);
+					if (tempInfo != null)
+					{
+						fi = tempInfo;
+						parentType = fi.FieldType;
+						if (parentType.IsArray || typeof(IEnumerable).IsAssignableFrom(parentType))
+						{
+							try
+							{
+								System.Collections.IList list = (System.Collections.IList)fi.GetValue(currentObject);
+								object[] array = new object[list.Count];
+								for (int i = 0; i < list.Count; i++)
+								{
+									array[i] = list[i];
+								}
+								currentObject = array;
+							}
+							catch (System.Exception e)
+							{
+								object[] tempArray = (object[])fi.GetValue(currentObject);
+								currentObject = tempArray;
+							}
+						}
+						else
+						{
+							currentObject = fi.GetValue(currentObject);
+						}
+					}
+					else
+					{
+						return null;
+					}
+				}
+			}
+			if (currentObject != null)
+			{
+				return currentObject;
+			}
+			else { return null; }
+		}
 
 		//returns the default starting position
 		//includes padding
-		public static Rect GetStartingPosition(Rect sentPosition)
+		public static Rect GetStartingPosition(Rect sentPosition, bool usePadding = true)
 		{
-			return new Rect(sentPosition.x, sentPosition.y + initialVerticalPaddingHeight, sentPosition.width - initialHorizontalPaddingHeight, lineHeight);
+			float horiztonalPad = 0F;
+			//if indented, add padding
+			if (usePadding == true) { horiztonalPad = InitialHorizontalPadding; }
+			float verticalPad = 0F;
+			//if extra vertical space needed, add padding
+			if (usePadding == true) { verticalPad = InitialVerticalPadding; }
+			//create and return new rect
+			return new Rect(sentPosition.x, sentPosition.y + verticalPad, sentPosition.width - horiztonalPad, LineHeight);
 		}
 
 		//sent as a func to list draw element call back
@@ -42,10 +115,10 @@ namespace DSA.Extensions.Base.Editor
 		{
 			float thisIndent = 0F;
 			//if indented, add padding
-			if (isIndented == true) { thisIndent = indentDistance; }
+			if (isIndented == true) { thisIndent = IndentDistance; }
 			float thisVeritcalPadding = 0F;
 			//if extra vertical space needed, add padding
-			if (usePadding == true) { thisVeritcalPadding = verticalPadding; }
+			if (usePadding == true) { thisVeritcalPadding = VerticalPadding; }
 			//create and return new rect
 			return new Rect(sentPosition.x + thisIndent, sentPosition.y + sentPosition.height + thisVeritcalPadding, sentPosition.width - thisIndent, sentHeight);
 		}
@@ -54,9 +127,9 @@ namespace DSA.Extensions.Base.Editor
 		public static Rect GetIndentedPosition(Rect sentPosition, bool isIndented = true)
 		{
 			//set positive indent
-			float thisIndent = indentDistance;
+			float thisIndent = IndentDistance;
 			//if not indeted, set negative indent distance
-			if (!isIndented) { thisIndent = -indentDistance; }
+			if (!isIndented) { thisIndent = -IndentDistance; }
 			//return new position
 			return new Rect(sentPosition.x + thisIndent, sentPosition.y, sentPosition.width - thisIndent, sentPosition.height);
 		}
@@ -70,7 +143,7 @@ namespace DSA.Extensions.Base.Editor
 		//returns the total height taken with padding
 		public static float GetAddedHeight(float sentHeight)
 		{
-			return sentHeight + verticalPadding;
+			return sentHeight + VerticalPadding;
 		}
 		//Get the height of a property
 		public static float GetHeight(SerializedProperty sentProperty)
@@ -78,10 +151,10 @@ namespace DSA.Extensions.Base.Editor
 			return EditorGUI.GetPropertyHeight(sentProperty, true);
 		}
 
-		public static Rect DrawTopLabel(Rect position, string label)
+		public static Rect DrawTopLabel(Rect position, string label, bool usePadding = true)
 		{
 			//set initial rect
-			Rect newPosition = GetStartingPosition(position);
+			Rect newPosition = EditorTool.GetStartingPosition(position, usePadding);
 			//draw label
 			EditorGUI.LabelField(newPosition, label, EditorStyles.boldLabel);
 			//add indent
@@ -92,7 +165,7 @@ namespace DSA.Extensions.Base.Editor
 		public static Rect DrawLabel(Rect position, string label, bool isIndented = true)
 		{
 			//set initial rect
-			Rect newPosition = GetPosition(position, lineHeight);
+			Rect newPosition = GetPosition(position, LineHeight);
 			//draw label
 			EditorGUI.LabelField(newPosition, label, EditorStyles.boldLabel);
 			//add indent
@@ -105,7 +178,7 @@ namespace DSA.Extensions.Base.Editor
 
 		public static Rect DrawTextField(Rect position, SerializedProperty sentProperty, string label)
 		{
-			Rect newPosition = GetPosition(position, lineHeight);
+			Rect newPosition = GetPosition(position, LineHeight);
 			sentProperty.stringValue = EditorGUI.TextField(newPosition, label, sentProperty.stringValue);
 			return newPosition;
 		}
@@ -121,14 +194,14 @@ namespace DSA.Extensions.Base.Editor
 
 		public static Rect DrawIntField(Rect position, SerializedProperty sentProperty, string label)
 		{
-			Rect newPosition = GetPosition(position, lineHeight);
+			Rect newPosition = GetPosition(position, LineHeight);
 			sentProperty.intValue = EditorGUI.IntField(newPosition, label, sentProperty.intValue);
 			return newPosition;
 		}
 
 		public static Rect DrawBoolField(Rect position, SerializedProperty sentProperty, string label)
 		{
-			Rect newPosition = GetPosition(position, lineHeight);
+			Rect newPosition = GetPosition(position, LineHeight);
 			sentProperty.boolValue = EditorGUI.Toggle(newPosition, label, sentProperty.boolValue);
 			return newPosition;
 		}
@@ -146,13 +219,13 @@ namespace DSA.Extensions.Base.Editor
 			return newPosition;
 		}
 
-		public static Rect DrawReorderableList(Rect position, UnityEditorInternal.ReorderableList sentList, string label)
+		public static Rect DrawReorderableList(Rect position, UnityEditorInternal.ReorderableList sentList, string label = null)
 		{
 			//draw label
 			Rect newPosition = position;
 			if (!string.IsNullOrEmpty(label))
 			{
-				newPosition = GetPosition(newPosition, lineHeight);
+				newPosition = GetPosition(newPosition, LineHeight);
 				EditorGUI.LabelField(newPosition, label, EditorStyles.boldLabel);
 			}
 			//draw list
@@ -165,10 +238,10 @@ namespace DSA.Extensions.Base.Editor
 
 		public static Rect DrawArray(Rect position, SerializedProperty sentProperty, string label = null)
 		{
-			float height = lineHeight + (sentProperty.arraySize * lineHeight) + (sentProperty.arraySize - 1) * verticalPadding;
+			float height = LineHeight + (sentProperty.arraySize * LineHeight) + (sentProperty.arraySize - 1) * VerticalPadding;
 			Rect totalPosition = GetPosition(position, height);
 			height += 50F;
-			Rect newPosition = GetPosition(position, lineHeight);
+			Rect newPosition = GetPosition(position, LineHeight);
 			sentProperty.arraySize = EditorGUI.IntField(newPosition, label, sentProperty.arraySize);
 			newPosition = GetIndentedPosition(newPosition);
 			for (int i = 0; i < sentProperty.arraySize; i++)

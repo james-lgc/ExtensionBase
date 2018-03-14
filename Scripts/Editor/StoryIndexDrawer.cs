@@ -44,7 +44,7 @@ namespace DSA.Extensions.Base.Editor
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			return EditorTool.GetAddedHeight(EditorTool.lineHeight) * 5F;
+			return EditorTool.GetAddedHeight(EditorTool.LineHeight) * 5F;
 		}
 	}
 }

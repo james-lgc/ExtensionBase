@@ -12,14 +12,22 @@ namespace DSA.Extensions.Base
 
 		protected System.Func<string, string, string> getUniqueIDFunc;
 		//The name or description of the data
-		public abstract string Text { get; }
+		[SerializeField] protected string name;
+		public virtual string Text { get { return name; } }
 
-		public abstract int ID { get; }
+		[SerializeField] protected int id;
+		public virtual int ID { get { return id; } }
 
-		public DataItem()
+		[SerializeField] protected bool isExpanded;
+
+		public virtual string GetLabelText()
 		{
-
+			return Text;
 		}
+
+		public abstract string GetEndLabelText();
+
+		public abstract void SetAsNew();
 
 		public abstract void SetUniqueID(IProvider<string, string, string> sentProvider);
 

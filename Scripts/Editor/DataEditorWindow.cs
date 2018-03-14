@@ -33,7 +33,10 @@ namespace DSA.Extensions.Base.Editor
 			Rect scrollArea = new Rect(newPosition.x, newPosition.y + topButtonsPosition.height, newPosition.width, scrollViewHeight);
 			scrollPosition = GUI.BeginScrollView(scrollArea, scrollPosition, propertyPosition);
 			//draw current property
+			currentProperty.FindPropertyRelative("isExpanded").boolValue = true;
 			EditorGUI.PropertyField(propertyPosition, currentProperty, true);
+			currentProperty.FindPropertyRelative("isExpanded").boolValue = true;
+			//Debug.Log("Property Expansion: " + currentProperty.FindPropertyRelative("isExpanded").boolValue);
 			//end scroll view
 			GUI.EndScrollView();
 			//apply changes

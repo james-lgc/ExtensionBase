@@ -16,4 +16,10 @@ public class EditorShortCuts : EditorWindow
 	{
 		EditorApplication.ExecuteMenuItem("Window/Layouts/Data Editing");
 	}
+
+	[MenuItem("Window/LayoutShortcuts/Data Editing %3", false, 999)]
+	static void Layout3()
+	{
+		EditorApplication.ExecuteMenuItem("Window/Layouts/Data Editing And Console");
+	}
 }
