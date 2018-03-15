@@ -11,7 +11,7 @@ namespace DSA.Extensions.Base
 	public class DataUIButton : UIButtonBase, ISendable<DataItem>, ISettable<DataItem>
 	{
 		[SerializeField] private bool isSelectableAsClick;
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.UI; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.UI; } }
 
 		public Action<DataItem> SendAction { get; set; }
 

@@ -5,6 +5,6 @@ namespace DSA.Extensions.Base
 {
 	public class BlackOutCanvas : UICanvas
 	{
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.Scene; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.Scene; } }
 	}
 }

@@ -9,7 +9,7 @@ namespace DSA.Extensions.Base
 	[System.Serializable]
 	public class UIManager : ManagerBase
 	{
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.UI; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.UI; } }
 
 		[SerializeField] private UICanvas[] canvases;
 		private UIController uiController;

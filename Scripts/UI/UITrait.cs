@@ -9,6 +9,6 @@ namespace DSA.Extensions.Base
 	[System.Serializable]
 	public abstract class UITrait : TraitBase
 	{
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.UI; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.UI; } }
 	}
 }

@@ -9,7 +9,7 @@ namespace DSA.Extensions.Base
 	[System.Serializable]
 	public abstract class UICanvasTrait : TraitBase, ISendable<UICanvas>
 	{
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.UI; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.UI; } }
 
 		public Action<UICanvas> SendAction { get; set; }
 

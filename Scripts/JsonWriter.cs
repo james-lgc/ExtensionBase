@@ -22,6 +22,7 @@ namespace DSA.Extensions.Base
 			Debug.Log(tList);
 			TextAsset textAsset;
 			string currentPath = "Assets/Resouces";
+			string fullFileName = "/" + fileName + ".json";
 			try
 			{
 				textAsset = (TextAsset)Resources.Load(fileName);
@@ -33,7 +34,7 @@ namespace DSA.Extensions.Base
 				textAsset = new TextAsset();
 				textAsset.name = fileName;
 				AssetDatabase.CreateAsset(textAsset, currentPath);
-				currentPath = currentPath + "/" + fileName + ".json";
+				currentPath = currentPath + fullFileName;
 			}
 			using (FileStream fs = new FileStream(currentPath, FileMode.Create))
 			{
@@ -42,6 +43,7 @@ namespace DSA.Extensions.Base
 					sw.Write(jText);
 				}
 			}
+			AssetDatabase.Refresh();
 		}
 
 		[ExecuteInEditMode]
@@ -51,6 +53,7 @@ namespace DSA.Extensions.Base
 			T newTList = default(T);
 			try
 			{
+				AssetDatabase.Refresh();
 				textAsset = (TextAsset)Resources.Load(fileName);
 			}
 			catch (System.Exception e)

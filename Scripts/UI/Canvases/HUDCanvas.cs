@@ -7,7 +7,7 @@ namespace DSA.Extensions.Base
 	[System.Serializable]
 	public class HUDCanvas : UICanvas
 	{
-		public override ExtensionEnum.Extension Extension { get { return ExtensionEnum.Extension.GamePlay; } }
+		public override ExtensionEnum Extension { get { return ExtensionEnum.GamePlay; } }
 
 		[SerializeField] private InteractHUD interactHUD;
 

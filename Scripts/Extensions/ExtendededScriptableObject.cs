@@ -5,13 +5,13 @@ namespace DSA.Extensions.Base
 	public abstract class ExtendedScriptableObject : ScriptableObject, IExtendable
 	{
 		//Which extension the monobehaviour belongs to
-		public abstract ExtensionEnum.Extension Extension { get; }
+		public abstract ExtensionEnum Extension { get; }
 
 		//Checks if the extension is Loaded against a static dictionary
 		public virtual bool GetIsExtensionLoaded()
 		{
 			bool isActive = false;
-			ExtensionEnum.ActiveExtensionDict.TryGetValue(Extension, out isActive);
+			ExtensionEnumHolder.ActiveExtensionDict.TryGetValue(Extension, out isActive);
 			return isActive;
 		}
 	}

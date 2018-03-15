@@ -212,5 +212,11 @@ namespace DSA.Extensions.Base
 				traits[i].DataHolder = sentDataHolder;
 			}
 		}
+
+		public virtual bool ProcessInstruction(InstructionData sentInstruction)
+		{
+			if (sentInstruction.extension == Extension) { return true; }
+			return false;
+		}
 	}
 }

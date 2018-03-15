@@ -12,9 +12,7 @@ namespace DSA.Extensions.Base.Editor
 		protected SerializedProperty name;
 		protected SerializedProperty id;
 		protected SerializedProperty uniqueID;
-		protected SerializedProperty isExpanded;
 		protected abstract System.Action<SerializedProperty> editAction { get; }
-		//protected abstract System.Func<bool> isExpandedFunc { get; }
 
 		protected override void SetProperties(SerializedProperty sentProperty)
 		{

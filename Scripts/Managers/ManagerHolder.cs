@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 namespace DSA.Extensions.Base
 {
-	public class ManagerHolder : MonoBehaviour
+	public class ManagerHolder : ExtendedMonoBehaviour
 	{
 		private ManagerBase[] managers;
 		private bool isFirstLoad = true;
 		private ExtensionEnum extensionEnum;
 		private ManagerBase activeManager;
+
+		public override ExtensionEnum Extension { get { return ExtensionEnum.None; } }
 
 		private void Awake()
 		{
@@ -26,6 +29,7 @@ namespace DSA.Extensions.Base
 			for (int i = 0; i < managers.Length; i++)
 			{
 				if (!managers[i].GetIsExtensionLoaded()) { continue; }
+				managers[i].OnTraitsFound += PassDelegatesToTraits;
 				for (int j = 0; j < managers.Length; j++)
 				{
 					managers[i].OnTraitsFound += managers[j].PassDelegatesToTraits;
@@ -73,10 +77,10 @@ namespace DSA.Extensions.Base
 
 		private void SetActiveExtensions()
 		{
-			foreach (ExtensionEnum.Extension extension in System.Enum.GetValues(typeof(ExtensionEnum.Extension)))
+			foreach (ExtensionEnum extension in System.Enum.GetValues(typeof(ExtensionEnum)))
 			{
 				ManagerBase manager = null;
-				ExtensionEnum.ActiveExtensionDict.Add(extension, GetIsExtensionActive(extension));
+				ExtensionEnumHolder.ActiveExtensionDict.Add(extension, GetIsExtensionActive(extension));
 				for (int i = 0; i < managers.Length; i++)
 				{
 					if (managers[i].Extension == extension)
@@ -88,8 +92,9 @@ namespace DSA.Extensions.Base
 			}
 		}
 
-		private bool GetIsExtensionActive(ExtensionEnum.Extension sentExtension)
+		private bool GetIsExtensionActive(ExtensionEnum sentExtension)
 		{
+			if (sentExtension == ExtensionEnum.None) { return true; }
 			for (int i = 0; i < managers.Length; i++)
 			{
 				if (managers[i].Extension == sentExtension)
@@ -99,6 +104,39 @@ namespace DSA.Extensions.Base
 				}
 			}
 			return false;
+		}
+
+		private void PassDelegatesToTraits(TraitedMonoBehaviour sentObj)
+		{
+			SetTraitActions<InstructionTrait, InstructionData[]>(sentObj, PassInstructionToManagers);
+		}
+
+		private void SetTraitActions<T, U>(TraitedMonoBehaviour sentObj, Action<U> sentAction) where T : TraitBase, ISendable<U>
+		{
+			TraitBase[] traits = sentObj.GetArray();
+			for (int i = 0; i < traits.Length; i++)
+			{
+				if (traits[i] is T)
+				{
+					T newT = (T)traits[i];
+					newT.SendAction = sentAction;
+				}
+			}
+		}
+
+		private void PassInstructionToManagers(InstructionData[] sentInstructions)
+		{
+			if (sentInstructions == null) { return; }
+			for (int i = 0; i < managers.Length; i++)
+			{
+				for (int j = 0; j < sentInstructions.Length; j++)
+				{
+					if (managers[i].ProcessInstruction(sentInstructions[j]))
+					{
+						break;
+					}
+				}
+			}
 		}
 	}
 }

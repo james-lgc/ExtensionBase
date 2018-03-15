@@ -2,19 +2,18 @@
 using UnityEngine;
 namespace DSA.Extensions.Base
 {
+	//Contains a value for each managed extension
+	public enum ExtensionEnum { None, GamePlay, Scene, Story, Conversation, Exit, Character, Menu, UI, Time, Player, Save, Load, Options, Audio }
 	[SerializeField]
-	public class ExtensionEnum
+	public class ExtensionEnumHolder
 	{
-		//Contains a value for each managed extension
-		public enum Extension { None, GamePlay, Scene, Story, Conversation, Exit, Character, Menu, UI, Time, Player, Save, Load, Options, Audio }
-
-		private static Dictionary<Extension, bool> activeExtensionDict;
+		private static Dictionary<ExtensionEnum, bool> activeExtensionDict;
 		//used to keep track of currently loaded extensions
-		public static Dictionary<Extension, bool> ActiveExtensionDict
+		public static Dictionary<ExtensionEnum, bool> ActiveExtensionDict
 		{
 			get
 			{
-				if (activeExtensionDict == null) activeExtensionDict = new Dictionary<Extension, bool>();
+				if (activeExtensionDict == null) activeExtensionDict = new Dictionary<ExtensionEnum, bool>();
 				return activeExtensionDict;
 			}
 		}

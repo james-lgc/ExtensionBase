@@ -3,6 +3,6 @@ namespace DSA.Extensions.Base
 {
 	public interface IExtendable
 	{
-		ExtensionEnum.Extension Extension { get; }
+		ExtensionEnum Extension { get; }
 	}
 }
