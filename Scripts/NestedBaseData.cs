@@ -92,6 +92,7 @@ namespace DSA.Extensions.Base
 
 		protected void SetChildUnqueIDs(IProvider<string, string, string> sentProvider)
 		{
+			if (dataArray == null) { return; }
 			SetArrayUniqueIDs(dataArray, sentProvider);
 		}
 

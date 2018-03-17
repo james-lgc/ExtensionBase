@@ -23,14 +23,10 @@ namespace DSA.Extensions.Base
 			TextAsset textAsset;
 			string currentPath = "Assets/Resouces";
 			string fullFileName = "/" + fileName + ".json";
-			try
+			textAsset = (TextAsset)Resources.Load(fileName);
+			currentPath = AssetDatabase.GetAssetPath(textAsset);
+			if (textAsset == null || string.IsNullOrEmpty(currentPath))
 			{
-				textAsset = (TextAsset)Resources.Load(fileName);
-				currentPath = AssetDatabase.GetAssetPath(textAsset);
-			}
-			catch (System.Exception e)
-			{
-				Debug.Log("No File Existed, creating new file.\n" + e.ToString());
 				textAsset = new TextAsset();
 				textAsset.name = fileName;
 				AssetDatabase.CreateAsset(textAsset, currentPath);
