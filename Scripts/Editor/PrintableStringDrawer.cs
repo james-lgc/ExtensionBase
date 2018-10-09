@@ -16,7 +16,7 @@ namespace DSA.Extensions.Base.Editor
 		{
 			Rect newPosition = new Rect(position.x, position.y, position.width, 0F);
 			//draw unique id
-			Debug.Log(uniqueID.intValue);
+			Debug.Log(uniqueID.stringValue);
 			newPosition = DrawUniqueID(newPosition);
 			//draw name
 			Debug.Log(name.stringValue);
