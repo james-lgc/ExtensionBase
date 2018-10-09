@@ -18,7 +18,7 @@ namespace DSA.Extensions.Base
 		[ExecuteInEditMode]
 		protected virtual void WriteToJson(T tList)
 		{
-			string jText = JsonUtility.ToJson(tList);
+			string jText = JsonUtility.ToJson(tList, true);
 			Debug.Log(tList);
 			TextAsset textAsset;
 			string currentPath = "Assets/Resouces";
