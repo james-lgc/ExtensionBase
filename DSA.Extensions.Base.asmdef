@@ -1,6 +1,14 @@
 {
     "name": "DSA.Extensions.Base",
-    "references": [],
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Hybrid",
+        "Unity.Transforms",
+        "Unity.Mathematics",
+        "Unity.Jobs",
+        "Unity.Burst",
+        "Unity.Collections"
+    ],
     "includePlatforms": [],
     "excludePlatforms": []
 }
