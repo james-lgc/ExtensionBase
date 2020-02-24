@@ -10,5 +10,7 @@
 		"data"
 	],
 	"category": "Some thing",
-	"dependencies": {}
+	"dependencies": {
+		"com.unity.entities": "0.0.12-preview.18"
+	}
 }
