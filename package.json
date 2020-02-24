@@ -1,0 +1,14 @@
+{
+	"name": "com.dsa.extensions.base",
+	"displayName": "DSA Extension Base",
+	"version": "1.0.0",
+	"unity": "2018.4",
+	"description": "Extension Base",
+	"keywords": [
+		"config",
+		"file",
+		"data"
+	],
+	"category": "Some thing",
+	"dependencies": {}
+}
